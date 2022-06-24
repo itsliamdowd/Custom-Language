@@ -4,11 +4,9 @@ This project is an attempt at making a programming language using python. Althou
 
 ### Syntax
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+In this section, you will learn about the basic syntax of how to use the language
 
 ```markdown
-Syntax highlighted code block
-
 # Header 1
 ## Header 2
 ### Header 3
