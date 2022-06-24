@@ -1,8 +1,6 @@
-## Welcome to GitHub Pages
+## Make a Custom Programming Language using Python!
 
-You can use the [editor on GitHub](https://github.com/SkiingIsFun123/Custom-Language/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+This project is an attempt at making a programming language using python. Although it's basic so far, I think this project can definetly be expanded on and has a lot of room to grow from. The syntax is heavilly influenced by Python, Javascript, and Swift, making it easy to use and more beginner-friendly. The majority of the changes I made were changes that I wanted to see be made to all three languages and combining the aspects that I liked from each language for varius reasons.
 
 ### Markdown
 
