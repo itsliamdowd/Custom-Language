@@ -2,7 +2,7 @@
 
 This project is an attempt at making a programming language using python. Although it's basic so far, I think this project can definetly be expanded on and has a lot of room to grow from. The syntax is heavilly influenced by Python, Javascript, and Swift, making it easy to use and more beginner-friendly. The majority of the changes I made were changes that I wanted to see be made to all three languages and combining the aspects that I liked from each language for varius reasons.
 
-### Markdown
+### Syntax
 
 Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
