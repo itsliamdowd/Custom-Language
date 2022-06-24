@@ -7,9 +7,10 @@ This project is an attempt at making a programming language using python. Althou
 In this section, you will learn about the basic syntax of how to use the language
 
 ```markdown
-# Header 1
+# Hello World!
+Learn how to print "Hello World!" on the command line
 
-**Bold** and _Italic_ and `Code` text
+`print "Hello World!"`
 
 [Link](url) and ![Image](src)
 ```
