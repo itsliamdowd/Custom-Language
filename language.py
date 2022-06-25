@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 from __future__ import division
+import types
 from pyparsing import (Literal, CaselessLiteral, Word, Combine, Group, Optional, ZeroOrMore, Forward, nums, alphas, oneOf)
 import math
 import operator
@@ -112,16 +113,24 @@ global variables
 variables = {}
 global constants
 constants = {}
+global variableconstanttypes
+variableconstanttypes = {}
 
 def mathLogic(line, element):
     elementfrommath = element
-    for elementforsplit in elementfrommath.split():
-        if variables.has_key(elementforsplit):
-            elementfrommath = elementfrommath.replace(elementforsplit, variables[elementforsplit])
-            #CHANGES VARIABLE TO NUMBER VALUE FOR MATH
-        elif constants.has_key(elementforsplit):
-            elementfrommath = elementfrommath.replace(elementforsplit, constants[elementforsplit])
-            #CHANGES CONSTANT TO NUMBER VALUE FOR MATH
+    try:
+    #for i in range(1):
+        for elementforsplit in elementfrommath.split():
+            if variables.has_key(elementforsplit):
+                elementfrommath = elementfrommath.replace(elementforsplit, variables[elementforsplit])
+                #CHANGES VARIABLE TO NUMBER VALUE FOR MATH
+            elif constants.has_key(elementforsplit):
+                elementfrommath = elementfrommath.replace(elementforsplit, constants[elementforsplit])
+                #CHANGES CONSTANT TO NUMBER VALUE FOR MATH
+            else:
+                pass
+    except:
+        pass
     if '+' in line and '-' not in line and '*' not in line and '/' not in line:
         elementfrommath = elementfrommath.split('+')
         newelement = elementfrommath[0]
@@ -173,13 +182,18 @@ def combineStringsLogic(variable):
         variablesplit = variable.split(' + ')
         varforfinalvar = ""
         itemlist = []
-        for element in ' '.join(variablesplit).split():
+        for element in variablesplit:
             if "'" in element or '"' in element:
                 elementone = element.replace('"', '')
                 elementone = elementone.replace("'", "")
                 itemlist.append(elementone)
             elif "'" not in element and '"' not in element:
-                itemlist.append(variables[element])
+                if variables.has_key(element):
+                    itemlist.append(variables[str(element)])
+                    #ADDS VARIABLE TO STRING
+                elif constants.has_key(element):
+                    itemlist.append(constants[str(element)])
+                    #ADDS CONSTANT TO STRING
         for i in range(len(itemlist)):
             varforfinalvar = varforfinalvar + itemlist[i]
         return varforfinalvar
@@ -188,13 +202,13 @@ def combineStringsLogic(variable):
         variablesplit = variable.split('+')
         varforfinalvar = ""
         itemlist = []
-        for element in ' '.join(variablesplit).split():
+        for element in variablesplit:
             if "'" in element or '"' in element:
                 elementone = element.replace('"', '')
                 elementone = elementone.replace("'", "")
                 itemlist.append(elementone)
             elif "'" not in element and '"' not in element:
-                itemlist.append(variables[element])
+                itemlist.append(str(element))
         for i in range(len(itemlist)):
             varforfinalvar = varforfinalvar + itemlist[i]
         return varforfinalvar
@@ -202,17 +216,24 @@ def combineStringsLogic(variable):
 
 def printLogic(line):
     elementfromprint = line.split("print ",1)[1]
+    for element in elementfromprint.split():
+        if variables.has_key(element):
+            elementfromprint = elementfromprint.replace(element, variables[element])
+            #CHANGES VARIABLE TO NUMBER VALUE FOR MATH
+        elif constants.has_key(element):
+            elementfromprint = elementfromprint.replace(element, constants[element])
+            #CHANGES CONSTANT TO NUMBER VALUE FOR MATH
+        else:
+            pass
     if '"' in elementfromprint or "'" in elementfromprint:
-        elementfromprint = elementfromprint.replace('"', '')
-        elementfromprint = elementfromprint.replace("'", "")
         if '+' in elementfromprint:
-            elementfromprint = elementfromprint.replace('"', '')
-            elementfromprint = elementfromprint.replace("'", "")
-            elementforsave = combineStringsLogic(''.join(elementfromprint))
+            elementforsave = combineStringsLogic(elementfromprint)
             print(elementforsave)
             #COMBINES AND PRINTS STRING VALUE TO OUTPUT
         else:
-            print(elementfromprint)
+            elementone = elementfromprint.replace('"', '')
+            elementone = elementone.replace("'", "")
+            print(elementone)
             #PRINTS STRING VALUE TO OUTPUT
     elif "0" in line or "1" in line or "2" in line or "3" in line or "4" in line or "5" in line or "6" in line or "7" in line or "8" in line or "9" in line:
         if '+' in line or '-' in line or '*' in line or '/' in line:
@@ -224,18 +245,12 @@ def printLogic(line):
             print(number)
             #PRINTS NUMBER TO OUTPUT
     elif '+' in elementfromprint:
-        elementfromprint = elementfromprint.replace('"', '')
-        elementfromprint = elementfromprint.replace("'", "")
-        elementforsave = combineStringsLogic(''.join(elementfromprint))
+        elementforsave = combineStringsLogic(elementfromprint)
         print(elementforsave)
         #COMBINES AND PRINTS STRING VALUE TO OUTPUT
     else:
-        if variables.has_key(elementfromprint):
-            print(variables[elementfromprint])
-            #PRINTS VARIABLE TO OUTPUT
-        elif constants.has_key(elementfromprint):
-            print(constants[elementfromprint])
-            #PRINTS CONSTANT TO OUTPUT
+        print(elementfromprint)
+        #PRINTS ELEMENT NOT IN ANY OTHER IF STATEMENT
 
 def defineVariableLogic(line):
     elementfromdefine = line.split("variable ",1)[1]
@@ -245,26 +260,31 @@ def defineVariableLogic(line):
         if '"' in variable or "'" in variable:
             if "+" in variable:
                 variablesplitone = variable.split(' = ', 1)
-                elementforsave = combineStringsLogic(''.join(variablesplitone[1]))
-                variables[variablesplitone[0]] = elementforsave
+                elementforsave = combineStringsLogic(variablesplitone[1])
+                variables[str(variablesplitone[0])] = elementforsave
+                variableconstanttypes[variablesplitone[0]] = "str"
                 #COMBINE STRINGS LOGIC
             else:
                 varforstr = variablesplit[1].replace('"', '')
                 varforstr = varforstr.replace("'", "")
-                variables[variablesplit[0]] = varforstr
+                variables[str(variablesplit[0])] = varforstr
+                variableconstanttypes[variablesplit[0]] = "str"
                 #STRING VARIABLE
         elif "0" in line or "1" in line or "2" in line or "3" in line or "4" in line or "5" in line or "6" in line or "7" in line or "8" in line or "9" in line:
             if '+' in line or '-' in line or '*' in line or '/' in line:
                 elementfromdefine = variablesplit[1]
                 mathreturned = mathLogic(line, elementfromdefine)
-                variables[variablesplit[0]] = mathreturned
+                variables[str(variablesplit[0])] = mathreturned
+                variableconstanttypes[variablesplit[0]] = "int"
                 #HANDLES MATH LOGIC FOR DEFINING A VARIABLE
             elif '+' not in line and '-' not in line and '*' not in line and '/' not in line:
                 number = variablesplit[1]
-                variables[variablesplit[0]] = number
+                variables[str(variablesplit[0])] = number
+                variableconstanttypes[variablesplit[0]] = "int"
                 #SETS VARIABLE EQUAL TO MATH VALUE
         elif '"' not in variable and "'" not in variable:
-            variables[variablesplit[0]] = variablesplit[1]
+            variables[str(variablesplit[0])] = variablesplit[1]
+            variableconstanttypes[variablesplit[0]] = "int"
             #NUMBER VARIABLE
         else:
             print("ERROR")
@@ -275,26 +295,31 @@ def defineVariableLogic(line):
         if '"' in variable or "'" in variable:
             if "+" in variable:
                 variablesplitone = variable.split('=')
-                elementforsave = combineStringsLogic(''.join(variablesplitone[1]))
-                variables[variablesplitone[0]] = elementforsave
+                elementforsave = combineStringsLogic(variablesplitone[1])
+                variables[str(variablesplitone[0])] = elementforsave
+                variableconstanttypes[variablesplitone[0]] = "str"
                 #COMBINE STRINGS LOGIC
             else:
                 varforstr = variable.replace('"', '')
                 varforstr = varforstr.replace("'", "")
-                variables[variablesplit[0]] = varforstr
+                variables[str(variablesplit[0])] = varforstr
+                variableconstanttypes[variablesplit[0]] = "str"
                 #STRING VARIABLE
         elif "0" in line or "1" in line or "2" in line or "3" in line or "4" in line or "5" in line or "6" in line or "7" in line or "8" in line or "9" in line:
             if '+' in line or '-' in line or '*' in line or '/' in line:
                 elementfromdefine = variablesplit[1]
                 mathreturned = mathLogic(line, elementfromdefine)
-                variables[variablesplit[0]] = mathreturned
+                variables[str(variablesplit[0])] = mathreturned
+                variableconstanttypes[variablesplit[0]] = "int"
                 #HANDLES MATH LOGIC FOR PRINT
             elif '+' not in line and '-' not in line and '*' not in line and '/' not in line:
                 number = variablesplit[1]
-                variables[variablesplit[0]] = number
+                variables[str(variablesplit[0])] = number
+                variableconstanttypes[variablesplit[0]] = "int"
                 #PRINTS NUMBER TO OUTPUT
         elif '"' not in variable and "'" not in variable:
-            variables[variablesplit[0]] = variablesplit[1]
+            variables[str(variablesplit[0])] = variablesplit[1]
+            variableconstanttypes[variablesplit[0]] = "int"
             #NUMBER VARIABLE
         else:
             print("ERROR")
@@ -302,7 +327,8 @@ def defineVariableLogic(line):
     elif '=' not in variable:
         varforstr = variable.replace('"', '')
         varforstr = varforstr.replace("'", "")
-        variables[variable] = ""
+        variables[str(variable)] = ""
+        variableconstanttypes[variable[0]] = ""
         #DEFINE VARIABLE LOGIC
     else:
         print("ERROR")
@@ -316,25 +342,30 @@ def defineConstantLogic(line):
         if '"' in variable or "'" in variable:
             if "+" in variable:
                 variablesplitone = variable.split(' = ', 1)
-                elementforsave = combineStringsLogic(''.join(variablesplitone[1]))
-                variables[variablesplitone[0]] = elementforsave
+                elementforsave = combineStringsLogic(variablesplitone[1])
+                constants[variablesplitone[0]] = elementforsave
+                variableconstanttypes[variablesplitone[0]] = "str"
                 #COMBINE STRINGS LOGIC
             else:
                 varforstr = variablesplit[1].replace('"', '')
                 varforstr = varforstr.replace("'", "")
                 constants[variablesplit[0]] = varforstr
+                variableconstanttypes[variablesplit[0]] = "str"
                 #STRING CONSTANT
         elif "0" in line or "1" in line or "2" in line or "3" in line or "4" in line or "5" in line or "6" in line or "7" in line or "8" in line or "9" in line:
             if '+' in line or '-' in line or '*' in line or '/' in line:
                 returnedmathvalue = mathLogic(line, variablesplit[1])
                 constants[variablesplit[0]] = returnedmathvalue
+                variableconstanttypes[variablesplit[0]] = "int"
                 #SETS CONSTANT EQUAL TO MATH OUTPUT
             elif '+' not in line and '-' not in line and '*' not in line and '/' not in line:
                 number = variablesplit[1]
                 constants[variablesplit[0]] = number
+                variableconstanttypes[variablesplit[0]] = "int"
                 #SETS CONSTANT EQUAL TO NUMBER VALUE
         elif '"' not in variable and "'" not in variable:
             constants[variablesplit[0]] = variablesplit[1]
+            variableconstanttypes[variablesplit[0]] = "int"
             #NUMBER CONSTANT
         else:
             print("ERROR")
@@ -344,25 +375,30 @@ def defineConstantLogic(line):
         if '"' in variable or "'" in variable:
             if "+" in variable:
                 variablesplitone = variable.split('=')
-                elementforsave = combineStringsLogic(''.join(variablesplitone[1]))
-                variables[variablesplitone[0]] = elementforsave
+                elementforsave = combineStringsLogic(variablesplitone[1])
+                constants[variablesplitone[0]] = elementforsave
+                variableconstanttypes[variablesplitone[0]] = "str"
                 #COMBINE STRINGS LOGIC
             else:
                 varforstr = variable.replace('"', '')
                 varforstr = varforstr.replace("'", "")
-                variables[variablesplit[0]] = varforstr
+                constants[variablesplit[0]] = varforstr
+                variableconstanttypes[variablesplit[0]] = "str"
                 #STRING VARIABLE
         elif "0" in line or "1" in line or "2" in line or "3" in line or "4" in line or "5" in line or "6" in line or "7" in line or "8" in line or "9" in line:
             if '+' in line or '-' in line or '*' in line or '/' in line:
                 returnedmathvalue = mathLogic(line, variablesplit[1])
                 constants[variablesplit[0]] = returnedmathvalue
+                variableconstanttypes[variablesplit[0]] = "int"
                 #SETS CONSTANT EQUAL TO MATH OUTPUT
             elif '+' not in line and '-' not in line and '*' not in line and '/' not in line:
                 number = variablesplit[1]
                 constants[variablesplit[0]] = number
+                variableconstanttypes[variablesplit[0]] = "int"
                 #SETS CONSTANT EQUAL TO NUMBER VALUE
         elif '"' not in variable and "'" not in variable:
             constants[variablesplit[0]] = variablesplit[1]
+            variableconstanttypes[variablesplit[0]] = "int"
             #NUMBER CONSTANT
         else:
             print("ERROR")
@@ -371,6 +407,7 @@ def defineConstantLogic(line):
         varforstr = variable.replace('"', '')
         varforstr = varforstr.replace("'", "")
         constants[variable] = ""
+        variableconstanttypes[variablesplit[0]] = ""
         #DEFINE CONSTANT LOGIC
 
 def setVariableLogic(line):
@@ -383,24 +420,28 @@ def setVariableLogic(line):
             if "+" in variable:
                 variablesplitone = variable.split(' = ', 1)
                 elementforsave = combineStringsLogic(''.join(variablesplitone[1]))
-                variables[variablesplitone[0]] = elementforsave
+                variables[str(variablesplitone[0])] = elementforsave
+                variableconstanttypes[variablesplitone[0]] = "str"
                 #COMBINE STRINGS LOGIC
             else:
                 varforstr = variablesplit[1].replace('"', '')
                 varforstr = varforstr.replace("'", "")
-                variables[variablesplit[0]] = varforstr
+                variables[str(variablesplit[0])] = varforstr
+                variableconstanttypes[variablesplit[0]] = "str"
                 #STRING VARIABLE
         elif "0" in line or "1" in line or "2" in line or "3" in line or "4" in line or "5" in line or "6" in line or "7" in line or "8" in line or "9" in line:
             if '+' in line or '-' in line or '*' in line or '/' in line:
                 returnedmathvalue = mathLogic(line, variablesplit[1])
-                variables[variablesplit[0]] = returnedmathvalue
+                variables[str(variablesplit[0])] = returnedmathvalue
                 #SETS VARIABLE EQUAL TO MATH OUTPUT
             elif '+' not in line and '-' not in line and '*' not in line and '/' not in line:
                 number = variablesplit[1]
-                variables[variablesplit[0]] = number
+                variables[str(variablesplit[0])] = number
+                variableconstanttypes[variablesplit[0]] = "int"
                 #SETS VARIABLE EQUAL TO NUMBER VALUE
         elif '"' not in variable and "'" not in variable:
-            variables[variablesplit[0]] = variablesplit[1]
+            variables[str(variablesplit[0])] = variablesplit[1]
+            variableconstanttypes[variablesplit[0]] = "int"
             #NUMBER VARIABLE
 
     elif '=' in variable:
@@ -410,29 +451,34 @@ def setVariableLogic(line):
             if "+" in variable:
                 variablesplitone = variable.split('=')
                 elementforsave = combineStringsLogic(''.join(variablesplitone[1]))
-                variables[variablesplitone[0]] = elementforsave
+                variables[str(variablesplitone[0])] = elementforsave
+                variableconstanttypes[variablesplitone[0]] = "str"
                 #COMBINE STRINGS LOGIC
             else:
                 varforstr = variablesplit[1].replace('"', '')
                 varforstr = varforstr.replace("'", "")
-                variables[variablesplit[0]] = varforstr
+                variables[str(variablesplit[0])] = varforstr
+                variableconstanttypes[variablesplit[0]] = "str"
                 #STRING VARIABLE
         elif "0" in line or "1" in line or "2" in line or "3" in line or "4" in line or "5" in line or "6" in line or "7" in line or "8" in line or "9" in line:
             if '+' in line or '-' in line or '*' in line or '/' in line:
                 returnedmathvalue = mathLogic(line, variablesplit[1])
-                variables[variablesplit[0]] = returnedmathvalue
+                variables[str(variablesplit[0])] = returnedmathvalue
+                variableconstanttypes[variablesplit[0]] = "int"
                 #SETS VARIABLE EQUAL TO MATH OUTPUT
             elif '+' not in line and '-' not in line and '*' not in line and '/' not in line:
                 number = variablesplit[1]
-                variables[variablesplit[0]] = number
+                variables[str(variablesplit[0])] = number
+                variableconstanttypes[variablesplit[0]] = "int"
                 #SETS VARIABLE EQUAL TO NUMBER VALUE
         elif '"' not in variable and "'" not in variable:
-            variables[variablesplit[0]] = variablesplit[1]
+            variables[str(variablesplit[0])] = variablesplit[1]
             #NUMBER VARIABLE
     elif '=' not in variable:
         varforstr = variable.replace('"', '')
         varforstr = varforstr.replace("'", "")
-        variables[variable] = ""
+        variables[str(variable)] = ""
+        variableconstanttypes[variable] = ""
         #DEFINE VARIABLE LOGIC
 
 def userInputLogic(line):
@@ -453,13 +499,27 @@ def userInputLogic(line):
 
 def defineVariableNoValueLogic(line):
     elementfromset = line.split("define variable ",1)[1]
-    variables[elementfromset] = ""
+    variables[str(elementfromset)] = ""
     #DEFINE VARIABLE WITH NO VALUE LOGIC
 
 def defineConstantNoValueLogic(line):
     elementfromset = line.split("define constant ",1)[1]
     constants[elementfromset] = ""
     #DEFINE CONSTANT WITH NO VALUE LOGIC
+
+def typeLogic(line):
+    elementfromset = line.split("print ",1)[1].replace('.type()', '')
+    for element in elementfromset.split():
+        if variables.has_key(element):
+            typeForVariable = variableconstanttypes[element]
+            #CHANGES VARIABLE TO NUMBER VALUE FOR MATH
+        elif constants.has_key(element):
+            typeForVariable = variableconstanttypes[element]
+            #CHANGES CONSTANT TO NUMBER VALUE FOR MATH
+        else:
+            pass
+    return typeForVariable
+
 
 def open_file(filename):
     data = open(filename, "r").read()
@@ -484,8 +544,11 @@ def run():
         except:
             pass
         for line in fileinfo:
-            if "print" in line and line[:2] != '//':
+            if "print" in line and line[:2] != '//' and '.type()' not in line:
                 printLogic(line)
+            elif "print" in line and line[:2] != '//' and '.type()' in line:
+                datafromtypelogic = typeLogic(line)
+                print(datafromtypelogic)
             #elif "import" in line and line[:2] != '//':
             #    importLogic(line)
             elif "set" in line and line[:2] != '//':
@@ -501,7 +564,7 @@ def run():
             elif "input" in line and line[:2] != '//':
                 userInputLogic(line)
             #elif "define function" in line and line[:2] != '//':
-            #    defineFunctionLogic(line)
+                #defineFunctionLogic(line)
             #elif "use" in line and line[:2] != '//':
             #    useFunctionLogic(line)
             elif line[:2] == '//':
