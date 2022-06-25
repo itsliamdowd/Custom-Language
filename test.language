@@ -10,3 +10,8 @@ constant hello = "World"
 print hello
 
 print 2+2/2*50
+
+set test = 1
+print test.type()
+
+//Comment something
