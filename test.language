@@ -1,0 +1,12 @@
+print "Hello " + "World!"
+
+variable song = "Wouldn't it be nice"
+print song
+
+set song = "Mexico"
+print song
+
+constant hello = "World"
+print hello
+
+print 2+2/2*50
