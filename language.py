@@ -188,12 +188,42 @@ def combineStringsLogic(variable):
                 elementone = elementone.replace("'", "")
                 itemlist.append(elementone)
             elif "'" not in element and '"' not in element:
-                if variables.has_key(element):
+                if element in variables:
                     itemlist.append(variables[str(element)])
                     #ADDS VARIABLE TO STRING
-                elif constants.has_key(element):
+                elif element in constants:
                     itemlist.append(constants[str(element)])
                     #ADDS CONSTANT TO STRING
+        for i in range(len(itemlist)):
+            varforfinalvar = varforfinalvar + itemlist[i]
+        return varforfinalvar
+        #COMBINE STRINGS LOGIC
+    elif ' +' in variable:
+        variablesplit = variable.split(' +')
+        varforfinalvar = ""
+        itemlist = []
+        for element in variablesplit:
+            if "'" in element or '"' in element:
+                elementone = element.replace('"', '')
+                elementone = elementone.replace("'", "")
+                itemlist.append(elementone)
+            elif "'" not in element and '"' not in element:
+                itemlist.append(str(element))
+        for i in range(len(itemlist)):
+            varforfinalvar = varforfinalvar + itemlist[i]
+        return varforfinalvar
+        #COMBINE STRINGS LOGIC
+    elif '+ ' in variable:
+        variablesplit = variable.split('+ ')
+        varforfinalvar = ""
+        itemlist = []
+        for element in variablesplit:
+            if "'" in element or '"' in element:
+                elementone = element.replace('"', '')
+                elementone = elementone.replace("'", "")
+                itemlist.append(elementone)
+            elif "'" not in element and '"' not in element:
+                itemlist.append(str(element))
         for i in range(len(itemlist)):
             varforfinalvar = varforfinalvar + itemlist[i]
         return varforfinalvar
@@ -215,16 +245,20 @@ def combineStringsLogic(variable):
         #COMBINE STRINGS LOGIC
 
 def printLogic(line):
-    elementfromprint = line.split("print ",1)[1]
+    elementfromprint = line.split("print",1)[1]
+    elementfromprint = elementfromprint.replace("(", "")
+    elementfromprint = elementfromprint.replace(")", "")
+    
     for element in elementfromprint.split():
-        if variables.has_key(element):
-            elementfromprint = elementfromprint.replace(element, variables[element])
-            #CHANGES VARIABLE TO NUMBER VALUE FOR MATH
-        elif constants.has_key(element):
-            elementfromprint = elementfromprint.replace(element, constants[element])
-            #CHANGES CONSTANT TO NUMBER VALUE FOR MATH
-        else:
-            pass
+        if '"' not in element:
+            if element in variables:
+                elementfromprint = elementfromprint.replace(element, '"' + variables[element] + '"')
+                #CHANGES VARIABLE TO NUMBER VALUE FOR MATH
+            elif element in constants:
+                elementfromprint = elementfromprint.replace(element, '"' + constants[element] + '"')
+                #CHANGES CONSTANT TO NUMBER VALUE FOR MATH
+            else:
+                pass
     if '"' in elementfromprint or "'" in elementfromprint:
         if '+' in elementfromprint:
             elementforsave = combineStringsLogic(elementfromprint)
@@ -520,7 +554,6 @@ def typeLogic(line):
             pass
     return typeForVariable
 
-
 def open_file(filename):
     data = open(filename, "r").read()
     data += "\n"
@@ -535,7 +568,8 @@ def open_file(filename):
 
 def run():
     fileinfo = ""
-    fileinfo = open_file(argv[1])
+    #fileinfo = open_file(argv[1])
+    fileinfo = open_file("test.language")
     #try:
     for i in range(1):
         fileinfo = fileinfo.split('\n')
