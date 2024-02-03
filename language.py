@@ -544,10 +544,10 @@ def defineConstantNoValueLogic(line):
 def typeLogic(line):
     elementfromset = line.split("print ",1)[1].replace('.type()', '')
     for element in elementfromset.split():
-        if variables.has_key(element):
+        if element in variables.keys():
             typeForVariable = variableconstanttypes[element]
             #CHANGES VARIABLE TO NUMBER VALUE FOR MATH
-        elif constants.has_key(element):
+        elif element in constants.keys():
             typeForVariable = variableconstanttypes[element]
             #CHANGES CONSTANT TO NUMBER VALUE FOR MATH
         else:
